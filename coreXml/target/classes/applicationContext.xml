@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 注入外部properties文件中的属性值-->
+    <context:property-placeholder location="jdbc.properties" />
+   <!-- <context:component-scan base-package="com.lanou.spring" />-->
+
+    <!-- 带参数的构造方法创建bean -->
+    <bean id="queryRunner" class="org.apache.commons.dbutils.QueryRunner">
+        <constructor-arg name="ds" ref="dataSource" />
+    </bean>
+
+
+
+    <!-- 无参构造方法创建bean
+    <bean id="queryRunner" class="org.apache.commons.dbutils.QueryRunner" />
+  -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.user}" />
+        <property name="password" value="${jdbc.password}" />
+        <property name="driverClassName" value="${jdbc.driver}" />
+        <property name="filters" value="stat" />
+
+        <property name="maxActive" value="20" />
+        <property name="initialSize" value="1" />
+        <property name="maxWait" value="60000" />
+        <property name="minIdle" value="1" />
+
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />
+        <property name="minEvictableIdleTimeMillis" value="300000" />
+
+        <property name="testWhileIdle" value="true" />
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="false" />
+
+        <property name="poolPreparedStatements" value="true" />
+        <property name="maxOpenPreparedStatements" value="20" />
+
+        <property name="asyncInit" value="true" />
+    </bean>
+
+  <!-- 通过c命名空间方式注入 ,头部加入xmlns:c="http://www.springframework.org/schema/c"-->
+
+    <bean  id ="孙尚香"  class="com.lanou.spring.bean.Man" c:name="孙尚香"/>
+    <!-- 通过p命名空间方式注入, 头部加入 xmlns:p="http://www.springframework.org/schema/p"-->
+    <bean  id ="刘备"  class="com.lanou.spring.bean.Man" p:name="刘备" />
+
+
+    <!-- 注入集合类型属性-->
+    <bean id="lisi" class="com.lanou.spring.bean.Man">
+        <property name="name" value="李四"></property>
+        <property name="hobbies">
+          <list>
+              <value>睡觉</value>
+              <value>玩</value>
+          </list>
+        </property>
+        <property name="game">
+            <map>
+                <entry key="英雄联盟" value="最强王者"></entry>
+            </map>
+        </property>
+    </bean>
+    <!--注入空值 和null-->
+    <bean id = "赵云" class="com.lanou.spring.bean.Man">
+       <!-- <property name="sex" value=""></property>-->
+        <property name="sex" >
+            <null></null>
+        </property>
+    </bean>
+
+    <!-- 使用内部bean注入 -->
+    <bean id = "张飞" class="com.lanou.spring.bean.Man">
+        <property name="name" value="刘备"></property>
+        <property name="friend">
+            <bean  id = "关羽"  class="com.lanou.spring.bean.Man" p:name="关羽" ></bean>
+        </property>
+    </bean>
+
+    <!--注入复合属性值-->
+  <bean id = "book" class="com.lanou.spring.bean.Man">
+      <property name="book">
+          <bean class="com.lanou.spring.bean.Book"></bean>
+      </property>
+      <property name="book.bookName" value="斗破苍穹" />
+   </bean>
+
+
+<bean class="com.lanou.spring.dao.BookDao">
+    <property name="queryRunner" ref="queryRunner"></property>
+</bean>
+
+        <bean id="xyj" class="com.lanou.spring.bean.Book" p:bookName="西游记" />
+     <!--   <bean id="hlm" class="com.lanou.spring.bean.Book" p:bookName="红楼梦" />
+        <bean id="book" class="com.lanou.spring.bean.Book" p:bookName="西厢记" />-->
+      <bean id="cc" class="com.lanou.spring.bean.Man" p:name="曹操" autowire="constructor"></bean>
+
+
+</beans>
+
+
+
